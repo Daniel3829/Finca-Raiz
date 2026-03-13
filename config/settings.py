@@ -100,8 +100,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', f"postgres://postgres:2149@localhost:5432/tierras"),
-        conn_max_age=600
+        default=os.getenv('DATABASE_URL')
     )
 }
 
