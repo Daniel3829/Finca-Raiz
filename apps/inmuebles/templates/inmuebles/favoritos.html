@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+lista
+{% endblock %}
+
+{% block content %}
+<h1>Mis favoritos</h1>
+
+{% for favorito in favoritos %}
+
+<div>
+<h3>{{ favorito.inmueble.titulo }}</h3>
+<p>{{ favorito.inmueble.ciudad }}</p>
+<p>$ {{ favorito.inmueble.precio }}</p>
+
+<a href="{% url 'detalle_inmueble' favorito.inmueble.id %}">
+Ver inmueble
+</a>
+
+</div>
+
+{% empty %}
+
+<p>No tienes favoritos guardados.</p>
+
+{% endfor %}
+{% endblock %}

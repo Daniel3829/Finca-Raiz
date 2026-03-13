@@ -1,0 +1,121 @@
+/* ESTILOS GLOBALES */
+body {
+    background-color: #F5E6D3; /* Color de fondo oficial del dashboard */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* OVERRIDE COLORES PRIMARIOS (Para igualar estilo del Dashboard) */
+.text-primary { color: #C97C5D !important; }
+.btn-primary { background-color: #C97C5D !important; border-color: #C97C5D !important; }
+.btn-primary:hover { background-color: #b56b4f !important; border-color: #b56b4f !important; }
+.btn-outline-primary { color: #C97C5D !important; border-color: #C97C5D !important; }
+.btn-outline-primary:hover { background-color: #C97C5D !important; color: white !important; }
+.page-item.active .page-link { background-color: #C97C5D !important; border-color: #C97C5D !important; box-shadow: 0 4px 8px rgba(201, 124, 93, 0.3) !important; }
+.form-control:focus, .form-select:focus { border-color: #C97C5D !important; box-shadow: 0 0 0 0.25rem rgba(201, 124, 93, 0.25) !important; }
+
+/* HERO SECTION */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+    height: 480px;
+    width: 100%;
+}
+.hero-text-container {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 800px;
+}
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+/* COMPONENTES DE FILTRO */
+.search-panel {
+    background-color: #ffffff;
+}
+
+/* TARJETAS DE PROPIEDAD */
+.property-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+}
+.property-img-wrapper {
+    height: 220px;
+    overflow: hidden;
+}
+.property-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.property-card:hover .property-img {
+    transform: scale(1.05);
+}
+
+/* ETIQUETAS Y BOTONES FLOTANTES */
+.badge-tipo {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.btn-favorito {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: white;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+}
+.btn-favorito:hover {
+    background: #ffeaea;
+    transform: scale(1.1);
+}
+
+/* ANIMACIONES GLOBALES */
+.animation-fade-in {
+    animation: fadeIn 1.2s ease forwards;
+}
+.animation-slide-up {
+    animation: slideUp 1s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* PAGINACIÓN CUSTOM */
+.page-link {
+    color: #495057;
+    border: none;
+    border-radius: 5px;
+    margin: 0 3px;
+    font-weight: 600;
+}
+.page-item.active .page-link {
+    background-color: #0d6efd;
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+}
+

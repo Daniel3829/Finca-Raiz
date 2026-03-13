@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Publicar inmueble{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'inmuebles/css/agregar.css' %}">
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4 profile-card">
+                
+                <!-- CABECERA -->
+                <div class="card-header border-0 text-center py-4 bg-transparent">
+                    <div class="icon-circle shadow-sm mb-3 mx-auto">
+                        <i class="bi bi-house-add-fill text-primary fs-2"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark mb-1">Publicar Inmueble</h2>
+                    <p class="text-muted">Comparte tu propiedad con miles de personas y encuentra el cliente ideal.</p>
+                </div>
+
+                <!-- CUERPO DEL FORMULARIO -->
+                <div class="card-body p-5 pt-0">
+                    <form method="post" enctype="multipart/form-data" id="formPublicar" class="needs-validation">
+                        {% csrf_token %}
+
+                        <!-- TÍTULO -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary"><i class="bi bi-fonts me-2 text-primary"></i>Título del Anuncio</label>
+                            {{ form.titulo }}
+                            {% if form.titulo.errors %}<div class="text-danger small mt-1">{{ form.titulo.errors }}</div>{% endif %}
+                        </div>
+
+                        <!-- FILA 3 COLUMNAS: TIPO, CIUDAD PRECIO -->
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-secondary"><i class="bi bi-building-add me-2 text-primary"></i>Tipo</label>
+                                {{ form.tipo }}
+                                {% if form.tipo.errors %}<div class="text-danger small mt-1">{{ form.tipo.errors }}</div>{% endif %}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-secondary"><i class="bi bi-geo-alt-fill me-2 text-primary"></i>Ciudad</label>
+                                {{ form.ciudad }}
+                                {% if form.ciudad.errors %}<div class="text-danger small mt-1">{{ form.ciudad.errors }}</div>{% endif %}
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold text-secondary"><i class="bi bi-cash-stack me-2 text-primary"></i>Precio</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light fw-bold">$</span>
+                                    {{ form.precio }}
+                                </div>
+                                {% if form.precio.errors %}<div class="text-danger small mt-1">{{ form.precio.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <!-- DESCRIPCIÓN -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold text-secondary"><i class="bi bi-card-text me-2 text-primary"></i>Descripción Detallada</label>
+                            {{ form.descripcion }}
+                            {% if form.descripcion.errors %}<div class="text-danger small mt-1">{{ form.descripcion.errors }}</div>{% endif %}
+                        </div>
+
+                        <!-- IMAGEN PRINCIPAL -->
+                        <div class="mb-5">
+                            <label class="form-label fw-bold text-secondary"><i class="bi bi-camera-fill me-2 text-primary"></i>Fotografía de Portada</label>
+                            <div class="portada-upload rounded-3 border-2 border-dashed p-4 text-center bg-light">
+                                <p class="text-muted small mb-3">Sube la mejor foto de la fachada o zona principal.</p>
+                                {{ form.imagen }}
+                                {% if form.imagen.errors %}<div class="text-danger small mt-1">{{ form.imagen.errors }}</div>{% endif %}
+                            </div>
+                        </div>
+
+                        <!-- BOTONES -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end border-top pt-4">
+                            <a href="{% url 'dashboard' %}" class="btn btn-light fw-bold px-4 me-md-2 text-secondary">Cancelar</a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm rounded-pill">
+                                <i class="bi bi-rocket-takeoff-fill me-2"></i> Publicar Inmueble
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

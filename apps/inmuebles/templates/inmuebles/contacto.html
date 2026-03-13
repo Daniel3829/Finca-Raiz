@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Contactar al Propietario — {{ inmueble.titulo }}{% endblock %}
+
+{% block content %}
+<style>
+body { background-color: #F5E6D3; }
+
+.contact-card {
+    border-top: 5px solid #C97C5D !important;
+    border-radius: 20px !important;
+    box-shadow: 0 20px 60px rgba(45,27,14,0.1) !important;
+}
+
+.form-control, .form-select {
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #ead4bc;
+    background: #fdfaf7;
+    font-size: 0.92rem;
+    transition: all 0.25s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #C97C5D;
+    box-shadow: 0 0 0 0.25rem rgba(201,124,93,0.18);
+    background: white;
+}
+
+.form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #8B4513;
+    letter-spacing: 0.3px;
+    margin-bottom: 6px;
+}
+
+.input-icon-wrap { position: relative; }
+.input-icon-wrap .bi {
+    position: absolute;
+    left: 14px; top: 50%; transform: translateY(-50%);
+    color: #C97C5D; font-size: 1rem; pointer-events: none;
+}
+.input-icon-wrap .form-control { padding-left: 42px; }
+
+.property-tag {
+    background: #fff5ef;
+    border: 1.5px dashed #C97C5D;
+    border-radius: 14px;
+    padding: 16px 22px;
+}
+
+.btn-send {
+    background: linear-gradient(135deg, #C97C5D, #b56b4f);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 20px rgba(201,124,93,0.35);
+}
+.btn-send:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(201,124,93,0.45);
+    background: linear-gradient(135deg, #b56b4f, #9d5a3f);
+    color: white;
+}
+
+.btn-autofill {
+    background: rgba(201,124,93,0.1);
+    border: 1.5px solid rgba(201,124,93,0.4);
+    color: #C97C5D;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.btn-autofill:hover { background: #C97C5D; color: white; }
+
+/* Modal registro datos */
+#modalAutofill .modal-content {
+    border-radius: 20px;
+    border: none;
+    overflow: hidden;
+}
+#modalAutofill .modal-header {
+    background: linear-gradient(135deg, #2D1B0E, #4a2210);
+    color: white;
+    border: none;
+    padding: 20px 24px;
+}
+</style>
+
+<div class="container py-5" style="max-width: 680px;">
+
+    <a href="{% url 'detalle_inmueble' inmueble.id %}" class="text-decoration-none fw-semibold mb-4 d-inline-flex align-items-center gap-2 text-secondary">
+        <i class="bi bi-arrow-left-circle-fill fs-5" style="color:#C97C5D;"></i> Volver al inmueble
+    </a>
+
+    <div class="card border-0 contact-card">
+        <!-- CABECERA -->
+        <div class="card-body px-4 px-md-5 py-4">
+            <div class="text-center mb-4">
+                <div class="mx-auto mb-3 rounded-circle d-flex align-items-center justify-content-center"
+                     style="width:70px;height:70px;background:linear-gradient(135deg,#C97C5D,#b56b4f);box-shadow:0 8px 20px rgba(201,124,93,0.3);">
+                    <i class="bi bi-envelope-paper-heart-fill text-white fs-2"></i>
+                </div>
+                <h2 class="fw-bold mb-1" style="color:#2D1B0E;">Contactar al Dueño</h2>
+                <p class="text-muted small">Completa tus datos y escribe tu mensaje. El propietario recibirá un correo.</p>
+            </div>
+
+            <!-- PROPERTY SNIPPET -->
+            <div class="property-tag d-flex align-items-center gap-3 mb-4">
+                {% if inmueble.imagen %}
+                <img src="{{ inmueble.imagen.url }}" style="width:60px;height:50px;object-fit:cover;border-radius:10px;border:1px solid #ead4bc;" alt="">
+                {% else %}
+                <div style="width:60px;height:50px;border-radius:10px;background:#F5E6D3;display:flex;align-items:center;justify-content:center;">
+                    <i class="bi bi-house-door-fill" style="color:#C97C5D;"></i>
+                </div>
+                {% endif %}
+                <div>
+                    <span class="badge rounded-pill px-3 mb-1" style="background:#2D1B0E;color:#F5E6D3;font-size:0.72rem;">{{ inmueble.get_tipo_display|default:inmueble.tipo|title }}</span>
+                    <h6 class="fw-bold mb-0" style="color:#2D1B0E;">{{ inmueble.titulo }}</h6>
+                    <small class="text-muted">${{ inmueble.precio|intcomma }}</small>
+                </div>
+            </div>
+
+            <!-- AUTOFILL BANNER para usuarios logueados -->
+            {% if user.is_authenticated %}
+            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mb-4" 
+                 style="background:#fff5ef; border:1.5px solid #ead4bc;">
+                <div>
+                    <p class="mb-0 small fw-semibold" style="color:#8B4513;">
+                        <i class="bi bi-lightning-charge-fill me-1" style="color:#C97C5D;"></i>
+                        Rellena el formulario con tus datos guardados
+                    </p>
+                    {% if datos_perfil %}
+                    <small class="text-muted">Último guardado: {{ datos_perfil.nombre }} · {{ datos_perfil.email }}</small>
+                    {% else %}
+                    <small class="text-muted">Primera vez: guardaremos tus datos para la próxima.</small>
+                    {% endif %}
+                </div>
+                <button type="button" class="btn-autofill" id="btnAutofill">
+                    ✨ Autocompletar
+                </button>
+            </div>
+            {% else %}
+            <div class="alert alert-light border mb-4 rounded-3 py-2 px-3 small text-muted">
+                <i class="bi bi-person-circle me-1" style="color:#C97C5D;"></i>
+                <a href="{% url 'login' %}?next={{ request.path }}" class="fw-bold" style="color:#C97C5D;">Inicia sesión</a> para guardar tus datos y autocompletar la próxima vez.
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'contactar_inmueble' inmueble.id %}" id="formContacto">
+                {% csrf_token %}
+
+                <div class="row g-3">
+                    <!-- Nombre -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="bi bi-person-fill me-1" style="color:#C97C5D;"></i>Nombre Completo</label>
+                        <input type="text" id="f-nombre" name="nombre" class="form-control" placeholder="Tu nombre" required>
+                    </div>
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label class="form-label"><i class="bi bi-envelope-fill me-1" style="color:#C97C5D;"></i>Correo Electrónico</label>
+                        <input type="email" id="f-email" name="email_contacto" class="form-control" placeholder="tu@correo.com" required>
+                    </div>
+                    <!-- Teléfono -->
+                    <div class="col-12">
+                        <label class="form-label"><i class="bi bi-phone-fill me-1" style="color:#C97C5D;"></i>Teléfono (opcional)</label>
+                        <input type="tel" id="f-telefono" name="telefono" class="form-control" placeholder="+57 300 000 0000">
+                    </div>
+                    <!-- Mensaje -->
+                    <div class="col-12">
+                        <label class="form-label"><i class="bi bi-chat-left-text-fill me-1" style="color:#C97C5D;"></i>Tu Mensaje</label>
+                        <textarea id="f-mensaje" name="mensaje" class="form-control" rows="5" 
+                                  placeholder="Ej: ¡Hola! Me interesa esta propiedad. ¿Podríamos agendar una visita?" required></textarea>
+                    </div>
+                </div>
+
+                <div class="d-grid mt-4">
+                    <button type="submit" class="btn-send">
+                        <i class="bi bi-send-fill me-2"></i>Enviar Mensaje al Propietario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Guardar datos por primera vez -->
+<div class="modal fade" id="modalAutofill" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="bi bi-person-vcard-fill me-2"></i>Guarda tus Datos</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-muted small mb-4">Es la primera vez que usas Autocompletar. Guarda tus datos y se rellenarán solos en el futuro.</p>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nombre Completo</label>
+                    <input type="text" id="m-nombre" class="form-control" placeholder="Tu nombre completo" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Teléfono</label>
+                    <input type="tel" id="m-telefono" class="form-control" placeholder="+57 300 000 0000">
+                </div>
+                <small class="text-muted"><i class="bi bi-info-circle me-1"></i>Tu email ya está guardado de tu cuenta.</small>
+            </div>
+            <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn rounded-pill px-4 fw-bold" id="btnGuardarModal"
+                        style="background:#C97C5D;color:white;">
+                    <i class="bi bi-save-fill me-1"></i> Guardar y Rellenar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+{% if user.is_authenticated %}
+const AUTOFILL_URL = "{% url 'guardar_datos_contacto' %}";
+const CSRF_TOKEN   = "{{ csrf_token }}";
+const DATOS_PERFIL = {{ datos_perfil|default:"null"|safe }};
+
+function fillForm(datos) {
+    document.getElementById("f-nombre").value   = datos.nombre    || "";
+    document.getElementById("f-email").value    = datos.email     || "";
+    document.getElementById("f-telefono").value = datos.telefono  || "";
+    document.getElementById("f-nombre").focus();
+}
+
+document.getElementById("btnAutofill").addEventListener("click", () => {
+    // If we already have profile data → fill immediately
+    if (DATOS_PERFIL) {
+        fillForm(DATOS_PERFIL);
+        return;
+    }
+    // Otherwise, hit the API to check
+    fetch(AUTOFILL_URL, { credentials: "same-origin" })
+        .then(r => r.json())
+        .then(data => {
+            if (data.tiene_datos) {
+                fillForm(data);
+            } else {
+                // First time: show modal to collect data
+                new bootstrap.Modal(document.getElementById("modalAutofill")).show();
+            }
+        });
+});
+
+document.getElementById("btnGuardarModal").addEventListener("click", () => {
+    const nombre   = document.getElementById("m-nombre").value.trim();
+    const telefono = document.getElementById("m-telefono").value.trim();
+    if (!nombre) { document.getElementById("m-nombre").focus(); return; }
+
+    fetch(AUTOFILL_URL, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json", "X-CSRFToken": CSRF_TOKEN },
+        body: JSON.stringify({ nombre, telefono }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        bootstrap.Modal.getInstance(document.getElementById("modalAutofill")).hide();
+        fillForm(data);
+    });
+});
+{% endif %}
+</script>
+{% endblock %}

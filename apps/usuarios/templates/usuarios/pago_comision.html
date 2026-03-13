@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+{% load l10n %}
+
+{% block title %}Factura y Pago{% endblock %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+body {
+    background-color: #F5E6D3;
+    font-family: Arial, sans-serif;
+}
+.invoice-card {
+    background-color: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+.btn-pago {
+    transition: all 0.2s;
+    border-width: 2px;
+}
+.btn-pago:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.btn-pago.active {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.05);
+}
+</style>
+
+<div class="container py-5">
+<div class="row justify-content-center">
+<div class="col-md-8 col-lg-6">
+    <div class="card shadow-lg border-0 rounded-4 invoice-card">
+        <div class="card-header bg-dark text-white text-center py-4 rounded-top-4">
+            <h3 class="mb-0"><i class="bi bi-receipt"></i> Facturación y Pago</h3>
+            <p class="mb-0 mt-2 opacity-75">Resumen de Venta y Comisión</p>
+        </div>
+        
+        <div class="card-body p-4 p-md-5">
+            
+            <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">Detalles del Inmueble</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Propiedad:</span>
+                <span class="fw-bold text-end">{{ inmueble.titulo }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Tipo:</span>
+                <span class="badge bg-warning text-dark px-3 py-2">{{ inmueble.get_tipo_display }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-4">
+                <span class="text-muted">Precio de Venta:</span>
+                <span class="fw-bold text-success fs-5">${{ inmueble.precio|intcomma }}</span>
+            </div>
+            
+            <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">Desglose de Pago</h5>
+            <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Tarifa de Comisión:</span>
+                <span class="badge bg-info text-dark px-3 py-2">{{ porcentaje|unlocalize }}%</span>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-4 bg-light p-4 rounded-3 border">
+                <h4 class="mb-0 text-muted">Total a Pagar</h4>
+                <h2 class="mb-0 fw-bold text-primary">${{ comision|intcomma }}</h2>
+            </div>
+            
+            <h5 class="fw-bold mt-5 mb-4 text-secondary border-bottom pb-2 text-center">Selecciona un Método de Pago</h5>
+            
+            <form method="POST" id="pagoForm" action="{% url 'marcar_vendido' inmueble.id %}">
+                {% csrf_token %}
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-outline-secondary w-100 py-4 d-flex flex-column align-items-center btn-pago h-100 shadow-sm" data-metodo="tarjeta">
+                            <i class="bi bi-credit-card fs-1 mb-2 text-primary"></i>
+                            <span class="fw-bold">Tarjeta</span>
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-outline-secondary w-100 py-4 d-flex flex-column align-items-center btn-pago h-100 shadow-sm" data-metodo="pse">
+                            <i class="bi bi-bank fs-1 mb-2 text-info"></i>
+                            <span class="fw-bold">PSE</span>
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-outline-secondary w-100 py-4 d-flex flex-column align-items-center btn-pago h-100 shadow-sm" data-metodo="nequi">
+                            <i class="bi bi-phone fs-1 mb-2" style="color:#d4006c;"></i>
+                            <span class="fw-bold" style="color:#d4006c;">Nequi</span>
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-outline-secondary w-100 py-4 d-flex flex-column align-items-center btn-pago h-100 shadow-sm" data-metodo="daviplata">
+                            <i class="bi bi-wallet2 fs-1 mb-2 text-danger"></i>
+                            <span class="text-danger fw-bold">Daviplata</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <input type="hidden" name="metodo" id="inputMetodo" value="">
+                
+                <div class="d-grid gap-3 mt-5">
+                    <button type="submit" class="btn btn-primary btn-lg fw-bold shadow" id="btnProcesar" disabled>Procesar Pago</button>
+                    <a href="{% url 'dashboard' %}" class="btn btn-light fw-bold">Cancelar y volver</a>
+                </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const btnsPago = document.querySelectorAll('.btn-pago');
+        const inputMetodo = document.getElementById('inputMetodo');
+        const btnProcesar = document.getElementById('btnProcesar');
+        const pagoForm = document.getElementById('pagoForm');
+        
+        btnsPago.forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active classes
+                btnsPago.forEach(b => {
+                    b.classList.remove('active', 'border-primary');
+                });
+                
+                // Add active class
+                this.classList.add('active', 'border-primary');
+                
+                // Set hidden input value
+                inputMetodo.value = this.dataset.metodo;
+                
+                btnProcesar.innerText = `Pagar con ${this.dataset.metodo.toUpperCase()}`;
+                
+                // Enable submit
+                btnProcesar.disabled = false;
+            });
+        });
+        
+        pagoForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const metodo = inputMetodo.value;
+            
+            if(!metodo) return;
+            
+            btnProcesar.disabled = true;
+            btnProcesar.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Validando y procesando...';
+            
+            // Simulación de pasarela de pago
+            setTimeout(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Pago Realizado con Éxito!',
+                    html: `Gracias. Se ha procesado la comisión usando <b>${metodo.toUpperCase()}</b>.<br>El inmueble ha sido marcado como VENDIDO.`,
+                    confirmButtonText: 'Finalizar',
+                    confirmButtonColor: '#198754',
+                    allowOutsideClick: false,
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        pagoForm.submit(); // submit form to DB logic
+                    }
+                });
+            }, 2500); // 2.5sec fake delay
+        });
+    });
+</script>
+{% endblock %}

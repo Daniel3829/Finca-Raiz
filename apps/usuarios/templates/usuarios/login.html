@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<title>Login | Tierras no expropiadas</title>
+
+<style>
+
+body{
+font-family: 'Segoe UI', sans-serif;
+background:#F5E6D3;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.card{
+background:#FAF3EB;
+padding:40px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+width:360px;
+}
+
+h2{
+
+color:#A65E42;
+margin-bottom:25px;
+text-align: center;
+}
+
+input{
+
+width:93%;
+padding:12px;
+margin-bottom:15px;
+border-radius:6px;
+border:1px solid #ddd;
+font-size:14px;
+
+}
+
+button{
+
+width:100%;
+padding:12px;
+background:#C97C5D;
+border:none;
+color:white;
+font-weight:bold;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+button:hover{
+background:#A65E42;
+}
+
+a{
+color:#A65E42;
+text-decoration:none;
+font-weight:bold;
+}
+
+a:hover{
+text-decoration:underline;
+}
+
+.links{
+margin-top:15px;
+font-size:14px;
+text-align: center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<h2>Tierras no expropiadas</h2>
+
+<form method="POST">
+
+{% csrf_token %}
+<label>Correo</label>
+{{ form.username }}
+<label>Contraseña</label>
+{{ form.password }}
+
+<button type="submit">Iniciar sesión</button>
+
+</form>
+
+<div class="links">
+
+<p>¿No tienes cuenta?</p>
+
+<a href="{% url 'register' %}">Crear cuenta</a>
+
+<br><br>
+
+</div>
+
+</div>
+
+</body>
+</html>

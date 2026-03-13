@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+lista
+{% endblock %}
+
+{% block content %}
+
+<title>Mi Panel</title>
+
+<link rel="stylesheet" href="{% static 'usuarios/css/dashboard.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+<div class="dashboard-container">
+
+<h1>Panel de Usuario</h1>
+
+<!-- MENSAJES DE NOTIFICACIÓN -->
+{% if messages %}
+<div class="mensajes-notificacion mb-4">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- RESUMEN -->
+<div class="resumen">
+
+<div class="card-resumen">
+<i class="bi bi-building"></i>
+<h3>{{ total_inmuebles }}</h3>
+<p>Mis Inmuebles</p>
+</div>
+
+<div class="card-resumen">
+<i class="bi bi-heart"></i>
+<h3>{{ total_favoritos }}</h3>
+<p>Favoritos</p>
+</div>
+
+<div class="card-resumen">
+<i class="bi bi-envelope"></i>
+<h3>{{ total_contactos }}</h3>
+<p>Contactos</p>
+</div>
+
+</div>
+
+
+<!-- MIS INMUEBLES -->
+<!-- MIS INMUEBLES -->
+
+<div class="seccion">
+
+<h2>Mis Inmuebles</h2>
+
+<div class="grid-cards">
+
+{% for inmueble in inmuebles %}
+
+<div class="card-inmueble">
+
+{% if inmueble.imagen %}
+<img src="{{ inmueble.imagen.url }}" class="card-img">
+{% else %}
+<img src="{% static 'img/no-image.png' %}" class="card-img">
+{% endif %}
+
+<div class="card-body">
+
+<h3>{{ inmueble.titulo }}</h3>
+<span class="badge-tipo">
+{{ inmueble.tipo }}
+</span>
+{% load humanize %}
+<p class="precio">${{ inmueble.precio|intcomma }}</p>
+
+<div class="acciones">
+
+<a href="{% url 'detalle_inmueble' inmueble.id %}" class="btn-ver">
+Ver
+</a>
+
+<button class="btn-editar" data-bs-toggle="collapse" data-bs-target="#collapseEditar{{ inmueble.id }}" aria-expanded="false" aria-controls="collapseEditar{{ inmueble.id }}">
+Editar
+</button>
+
+<form method="POST" action="{% url 'eliminar_inmueble' inmueble.id %}" style="display:inline;">
+{% csrf_token %}
+<button type="submit" class="btn-eliminar">Eliminar</button>
+</form>
+
+<a href="{% url 'marcar_vendido' inmueble.id %}" class="btn-vendido">
+Vendido
+</a>
+
+</div>
+
+<!-- INLINE EDIT FORM (COLLAPSIBLE) -->
+<div class="collapse" id="collapseEditar{{ inmueble.id }}">
+    <div class="form-edicion-inline">
+        <h5>Editar Inmueble</h5>
+        <form method="POST" action="{% url 'editar_inmueble' inmueble.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% load l10n %}
+            <div class="form-group">
+                <label>Título</label>
+                <input type="text" name="titulo" value="{{ inmueble.titulo }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Precio</label>
+                <input type="number" name="precio" value="{{ inmueble.precio|unlocalize }}" step="any" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Tipo</label>
+                <select name="tipo">
+                    <option value="apartamento" {% if inmueble.tipo == 'apartamento' %}selected{% endif %}>Apartamento</option>
+                    <option value="casa" {% if inmueble.tipo == 'casa' %}selected{% endif %}>Casa</option>
+                    <option value="finca" {% if inmueble.tipo == 'finca' %}selected{% endif %}>Finca</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea name="descripcion" rows="3" required>{{ inmueble.descripcion }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Ciudad</label>
+                <input type="text" name="ciudad" value="{{ inmueble.ciudad }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Imagen Principal (Opcional)</label>
+                <input type="file" name="imagen" accept="image/*">
+            </div>
+            
+            <button type="submit" class="btn-guardar-inline">Guardar cambios</button>
+        </form>
+    </div>
+</div>
+<!-- END INLINE EDIT FORM -->
+
+</div>
+
+</div>
+
+{% empty %}
+
+<p class="empty">No has publicado inmuebles aún</p>
+
+{% endfor %}
+
+</div>
+</div>
+
+
+<!-- FAVORITOS -->
+<div class="seccion">
+
+<h2>Mis Favoritos</h2>
+
+<div class="grid-cards">
+
+{% for fav in favoritos %}
+
+<div class="card-favorito">
+
+<i class="bi bi-heart-fill"></i>
+
+<h3>{{ fav.inmueble.titulo }}</h3>
+<span class="badge-tipo">
+{{ inmueble.tipo }}
+</span>
+<p>{{ fav.inmueble.descripcion }}</p>
+<a href="{% url 'detalle_inmueble' fav.inmueble.id %}" class="btn-ver">
+Ver inmueble
+</a>
+
+</div>
+
+{% empty %}
+
+<p class="empty">No tienes favoritos</p>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+
+<!-- CONTACTOS E INBOX -->
+<div class="seccion">
+    <h2 class="fw-bold text-dark mb-4 border-bottom pb-2"><i class="bi bi-inboxes-fill me-2 text-primary"></i> Buzón de Mensajes</h2>
+
+    <div class="row g-4">
+        {% for contacto in contactos %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 border-0 shadow-sm rounded-4" style="border-top: 4px solid #C97C5D !important; background-color: #fcfcfc;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle bg-light d-flex justify-content-center align-items-center me-3" style="width: 45px; height: 45px; border: 1px solid #ced4da;">
+                                <i class="bi bi-person-circle fs-3 text-secondary"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold text-dark">{{ contacto.nombre|default:"Anónimo" }}</h6>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i> {{ contacto.fecha|date:"d M Y" }}</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill px-3 py-2"><i class="bi bi-house-door-fill me-1"></i> Interesado</span>
+                    </div>
+
+                    <div class="mb-3 small text-muted">
+                        <div><i class="bi bi-envelope-fill me-1" style="color:#C97C5D;"></i>
+                            {{ contacto.email_contacto|default:contacto.usuario.email|default:"No especificado" }}
+                        </div>
+                        {% if contacto.telefono %}
+                        <div><i class="bi bi-phone-fill me-1" style="color:#C97C5D;"></i>{{ contacto.telefono }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-white p-3 rounded-3 border mb-3 position-relative" style="min-height: 70px;">
+                        <div class="position-absolute" style="top: -8px; left: 20px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid #dee2e6;"></div>
+                        <div class="position-absolute" style="top: -6px; left: 20px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 8px solid white;"></div>
+                        <p class="text-secondary small fst-italic mb-0">
+                            {% if contacto.mensaje %}"{{ contacto.mensaje }}"
+                            {% else %}<span class="text-muted">Sin mensaje adicional.</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <p class="text-muted small mb-0"><i class="bi bi-pin-map-fill me-1 text-primary"></i> Propiedad: <span class="fw-bold">{{ contacto.inmueble.titulo }}</span></p>
+                </div>
+                <div class="card-footer bg-transparent border-top-0 p-4 pt-0">
+                    {% with email_r=contacto.email_contacto %}{% if email_r %}
+                    <a href="mailto:{{ email_r }}" class="btn btn-outline-primary w-100 rounded-pill fw-bold">
+                        <i class="bi bi-reply-fill me-1"></i> Responder Email
+                    </a>
+                    {% elif contacto.usuario %}
+                    <a href="mailto:{{ contacto.usuario.email }}" class="btn btn-outline-primary w-100 rounded-pill fw-bold">
+                        <i class="bi bi-reply-fill me-1"></i> Responder Email
+                    </a>
+                    {% else %}
+                    <button class="btn btn-outline-secondary w-100 rounded-pill fw-bold" disabled>Sin email</button>
+                    {% endif %}{% endwith %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="display-1 text-muted opacity-25 mb-3"><i class="bi bi-mailbox mb-3"></i></div>
+            <h4 class="text-secondary">Tu buzón está vacío</h4>
+            <p class="text-muted">Aún no has recibido mensajes de compradores interesados.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+{% endblock %}

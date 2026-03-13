@@ -15,8 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.shortcuts import redirect
+
+def inicio(request):
+    return redirect("/api/inmuebles/lista")
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("", inicio),
+    path("admin/", admin.site.urls),
+    path("api/auth/", include("apps.usuarios.urls")),
+    path("api/inmuebles/", include("apps.inmuebles.urls")),
+    path("api/ventas/", include("apps.ventas.urls")),
 ]
+
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

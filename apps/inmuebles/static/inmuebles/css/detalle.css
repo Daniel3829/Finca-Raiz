@@ -1,0 +1,82 @@
+/* ESTILOS GLOBALES - DETALLE INMUEBLE */
+body {
+    background-color: #F5E6D3; /* Beige del Dashboard */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* OVERRIDE BOOTSTRAP COLORES PRIMARIOS (Terracota Dashboard) */
+.text-primary { color: #C97C5D !important; }
+.btn-primary { background-color: #C97C5D !important; border-color: #C97C5D !important; transition: all 0.3s ease; }
+.btn-primary:hover { background-color: #b56b4f !important; border-color: #b56b4f !important; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(201, 124, 93, 0.3); }
+
+/* ENLACE VOLVER */
+.btn-volver-link {
+    transition: color 0.3s ease;
+}
+.btn-volver-link:hover {
+    color: #C97C5D !important;
+}
+
+/* PORTADA HERO */
+.portada-wrapper {
+    height: 55vh;
+    min-height: 300px;
+    max-height: 400px;
+}
+.portada-img {
+    height: 100%;
+    transition: transform 0.5s ease;
+}
+.portada-wrapper:hover .portada-img {
+    transform: scale(1.02);
+}
+.portada-badge {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    backdrop-filter: blur(5px);
+}
+
+/* CONTENIDORES Y TIPOGRAFÍA */
+.separator-custom {
+    border-top: 2px solid #e0d5c1;
+    opacity: 1;
+}
+.descripcion-box {
+    border-left: 5px solid #C97C5D;
+}
+.text-justify {
+    text-align: justify;
+}
+
+/* PRICING CARD STICKY */
+.pricing-card {
+    top: 100px; /* Offset para que no quede pegada al borde superior de la pantalla */
+    z-index: 10;
+    transition: box-shadow 0.3s ease;
+}
+.pricing-card:hover {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important;
+}
+.tracking-wider {
+    letter-spacing: 2px;
+}
+
+/* BOTÓN FAVORITOS */
+.btn-outline-danger {
+    color: #e74c3c;
+    border-color: #e74c3c;
+    transition: all 0.3s ease;
+}
+.btn-outline-danger:hover {
+    background-color: #e74c3c;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(231, 76, 60, 0.3);
+}

@@ -1,0 +1,31 @@
+@login_required
+def marcar_vendido(request, id):
+
+    inmueble = get_object_or_404(Inmueble, id=id, propietario=request.user)
+
+    if inmueble.tipo == "apartamento":
+        porcentaje = Decimal("0.02")
+
+    elif inmueble.tipo == "casa":
+        porcentaje = Decimal("0.03")
+
+    elif inmueble.tipo == "finca":
+        porcentaje = Decimal("0.04")
+
+    else:
+        porcentaje = Decimal("0.05")
+
+    comision = inmueble.precio * porcentaje
+
+    if request.method == "POST":
+
+        inmueble.estado = "vendido"
+        inmueble.save()
+
+        return redirect("dashboard")
+
+    return render(request, "pagos/pago_comision.html", {
+        "inmueble": inmueble,
+        "comision": comision,
+        "porcentaje": porcentaje * 100
+    })

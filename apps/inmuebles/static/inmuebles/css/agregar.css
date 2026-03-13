@@ -1,0 +1,63 @@
+/* ESTILOS GLOBALES - AGREGAR INMUEBLE */
+body {
+    background-color: #F5E6D3; /* Beige del Dashboard */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* OVERRIDE BOOTSTRAP COLORES PRIMARIOS (Terracota Dashboard) */
+.text-primary { color: #C97C5D !important; }
+.btn-primary { background-color: #C97C5D !important; border-color: #C97C5D !important; transition: all 0.3s ease; }
+.btn-primary:hover { background-color: #b56b4f !important; border-color: #b56b4f !important; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(201, 124, 93, 0.3); }
+
+/* TARJETA DEL FORMULARIO */
+.profile-card {
+    border-top: 5px solid #C97C5D !important;
+}
+
+/* ICONO CABECERA */
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #fcfcfc;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #F5E6D3;
+}
+
+/* CAMPOS DE FORMULARIO (INPUTS) */
+.form-control, .form-select {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease;
+    background-color: #fcfcfc;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #C97C5D;
+    box-shadow: 0 0 0 0.25rem rgba(201, 124, 93, 0.25);
+    background-color: #ffffff;
+}
+.input-group-text {
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #ced4da;
+}
+.form-control.is-invalid, .was-validated .form-control:invalid {
+    border-color: #dc3545;
+}
+
+/* PORTADA UPLOAD (Reemplazando Dropzone) */
+.portada-upload {
+    border-color: #ced4da;
+    transition: all 0.3s ease;
+}
+.portada-upload:hover {
+    border-color: #C97C5D !important;
+    background-color: #fffaf6 !important;
+}
+
+/* OTROS ESTILOS */
+label.form-label {
+    font-size: 0.95rem;
+}

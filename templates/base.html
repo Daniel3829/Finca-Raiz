@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Tierras no Expropiadas{% endblock %}</title>
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ==================== NAVBAR PREMIUM ==================== -->
+<nav class="tne-navbar">
+    <div class="tne-nav-inner">
+
+        <!-- LOGO / BRAND -->
+        <a href="/" class="tne-brand">
+            <div class="tne-brand-icon">
+                <i class="bi bi-houses-fill"></i>
+            </div>
+            <div class="tne-brand-text">
+                <span class="tne-brand-name">Tierras no Expropiadas</span>
+                <span class="tne-brand-tagline">Plataforma Inmobiliaria</span>
+            </div>
+        </a>
+
+        <!-- NAV LINKS (centro) -->
+        <div class="tne-nav-links">
+            <a href="/api/inmuebles/lista/" class="tne-nav-link">
+                <i class="bi bi-grid-3x3-gap-fill"></i> Catálogo
+            </a>
+            {% if user.is_authenticated %}
+            <a href="/api/inmuebles/agregar/" class="tne-nav-link">
+                <i class="bi bi-plus-circle-fill"></i> Publicar
+            </a>
+            <a href="/api/auth/dashboard/" class="tne-nav-link">
+                <i class="bi bi-heart-fill"></i> Dashboard
+            </a>
+            {% endif %}
+        </div>
+
+        <!-- ACCIONES DE USUARIO (derecha) -->
+        <div class="tne-nav-actions">
+            {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                <a href="/api/auth/admin-dashboard/" class="tne-btn-admin">
+                    <i class="bi bi-shield-fill-check me-1"></i> Admin
+                </a>
+                {% else %}
+                <a href="/api/auth/dashboard/" class="tne-btn-dashboard">
+                    <i class="bi bi-speedometer2 me-1"></i> Mi Panel
+                </a>
+                {% endif %}
+                <div class="tne-user-chip">
+                    <div class="tne-avatar">{{ user.email|first|upper }}</div>
+                    <span class="tne-username d-none d-lg-inline">{{ user.email|truncatechars:18 }}</span>
+                </div>
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="tne-btn-logout" title="Cerrar sesión">
+                        <i class="bi bi-box-arrow-right"></i>
+                    </button>
+                </form>
+            {% else %}
+                <a href="/api/auth/login/" class="tne-btn-login">
+                    <i class="bi bi-person-fill me-1"></i> Iniciar Sesión
+                </a>
+                <a href="/api/auth/register/" class="tne-btn-register">
+                    <i class="bi bi-person-plus-fill me-1"></i> Registrarse
+                </a>
+            {% endif %}
+        </div>
+
+    </div>
+</nav>
+<!-- ==================== FIN NAVBAR ==================== -->
+
+{% block content %}
+{% endblock %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
