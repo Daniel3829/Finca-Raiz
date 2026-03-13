@@ -61,18 +61,18 @@
                     <h2 class="display-5 fw-bold text-primary mb-4">${{ inmueble.precio|intcomma }}</h2>
                     
                     <div class="d-grid gap-3 mt-4">
-                        {% if user.is_authenticated %}
                         <a href="{% url 'contactar_inmueble' inmueble.id %}" class="btn btn-primary btn-lg rounded-pill fw-bold shadow-sm p-3">
                             <i class="bi bi-envelope-paper-fill me-2"></i> Contactar al Dueño
                         </a>
+
+                        {% if user.is_authenticated %}
                         <a href="{% url 'agregar_favorito' inmueble.id %}" class="btn btn-outline-danger btn-lg rounded-pill fw-bold border-2 p-3">
                             <i class="bi bi-heart-fill me-2"></i> Guardar en Favoritos
                         </a>
                         {% else %}
-                        <div class="alert alert-warning rounded-4 border-0 shadow-sm" role="alert">
-                            <i class="bi bi-info-circle-fill me-2"></i> Inicia sesión para contactar o guardar en favoritos.
+                        <div class="alert alert-info rounded-4 border-0 shadow-sm mb-0" role="alert">
+                            <i class="bi bi-info-circle-fill me-2"></i> <a href="{% url 'login' %}" class="alert-link">Inicia sesión</a> para guardar en favoritos.
                         </div>
-                        <a href="{% url 'login' %}" class="btn btn-dark btn-lg rounded-pill fw-bold shadow-sm">Iniciar Sesión</a>
                         {% endif %}
                     </div>
                 </div>
